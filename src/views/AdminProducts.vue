@@ -13,8 +13,8 @@
         <th scope="col" class="text-start">商品名稱</th>
         <th scope="col">原價</th>
         <th scope="col">售價</th>
-        <th scope="col">推薦星等</th>
-        <th scope="col" width="120">啟用狀態</th>
+        <th scope="col" width="150">是否推薦</th>
+        <th scope="col" width="150">啟用狀態</th>
         <th scope="col">編輯/刪除</th>
       </tr>
     </thead>
@@ -24,17 +24,40 @@
         <td class="text-start">{{ item.title }}</td>
         <td>{{ item.origin_price }}</td>
         <td>{{ item.price }}</td>
-        <td>{{ item.starRankData }} 星</td>
-        <td text-end>
-          <div class="form-check form-switch">
+        <!-- <td>{{ item.starRankData }} {{ item.is_recommend}}星</td>
+         -->
+         <td class="text-center">
+          <div class="form-check form-switch ps-3">
             <input
-              class="form-check-input"
+              class="form-check-input ms-0"
+              type="checkbox"
+              role="switch"
+              id="item.id"
+              v-model="item.is_recommend"
+              :true-value="1"
+              :false-value="0"
+            />
+            <label
+              class="form-check-label"
+              for="item.id"
+              :class="{
+                'text-success': item.is_recommend,
+                'text-danger': !item.is_recommend,
+              }"
+              >{{ item.is_recommend ? "推薦" : "尚未" }}</label
+            >
+          </div>
+        </td>
+        <td class="text-center">
+          <div class="form-check form-switch ps-3">
+            <input
+              class="form-check-input ms-0"
               type="checkbox"
               role="switch"
               id="item.id"
               v-model="item.is_enabled"
               :true-value="1"
-              :false-value="0"
+              :false-value="0" @change="updateProduct(item)"
             />
             <label
               class="form-check-label"
@@ -49,8 +72,8 @@
         </td>
         <td>
           <div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-primary">編輯</button>
-            <button type="button" class="btn btn-outline-danger">刪除</button>
+            <button type="button" class="btn btn-primary" @click="openModal('edit', item)">編輯</button>
+            <button type="button" class="btn btn-outline-danger" :disabled="item.is_enabled" @click="openModal('delete', item)">刪除</button>
           </div>
         </td>
       </tr>
@@ -58,21 +81,36 @@
   </table>
 
   <!-- ProductModal  -->
-  <ProductModal ref="productModal"></ProductModal>
+  <ProductModal ref="productModal" :temp-product="tempProduct" :is-new="isNew" @get-products="getProducts"></ProductModal>
+  <!-- Pagination -->
+  <Pagination :pages="pagination" @get-products="getProducts"></Pagination>
+  <!-- AlertModal - 刪除&登出 -->
+  <AlertModal ref="alertModal" :temp-product="tempProduct" :alert-modal-status="alertModalStatus"
+            @get-products="getProducts"></AlertModal>
 </template>
 
 <script>
 import ProductModal from '@/components/ProductModal.vue'
+import Pagination from '@/components/Pagination.vue'
+import AlertModal from '@/components/AlertModal.vue'
 
 export default {
   data () {
     return {
       products: [],
-      pagination: {}
+      pagination: {},
+      tempProduct: {
+        imagesUrl: [],
+        is_recommend: ''
+      },
+      isNew: true,
+      alertModalStatus: ''
     }
   },
   components: {
-    ProductModal
+    ProductModal,
+    Pagination,
+    AlertModal
   },
   methods: {
     // 取得產品列表
@@ -87,10 +125,56 @@ export default {
         .catch((err) => {
           console.log(err.response)
         })
+    },
+    // 開啟 Modal
+    openModal (modalStatus, item) {
+      if (modalStatus === 'new') {
+        // 新增 - 清空選取產品內資料
+        this.tempProduct = {
+          imagesUrl: [],
+          is_recommend: ''
+        }
+
+        // 點擊新增 btn 就把改成 true
+        this.isNew = true
+
+        // 開啟 modal (呼叫 ProductModal 的方法)
+        this.$refs.productModal.openProductModal()
+      } else if (modalStatus === 'edit') {
+        // 編輯 - 拷貝點選的產品
+        this.tempProduct = { ...item }
+
+        // 點擊編輯 btn 就把改成 false
+        this.isNew = false
+
+        // 開啟 modal (呼叫 ProductModal 的方法)
+        this.$refs.productModal.openProductModal()
+      } else if (modalStatus === 'delete') {
+        // 刪除 - 拷貝點選的產品
+        this.tempProduct = { ...item }
+
+        this.alertModalStatus = modalStatus
+
+        // 開啟 modal
+        this.$refs.alertModal.openAlertModal()
+      } else if (modalStatus === 'logout') {
+        this.alertModalStatus = modalStatus
+
+        // 開啟 modal
+        this.$refs.alertModal.openAlertModal()
+      }
+    },
+    updateProduct (item) {
+      this.isNew = false
+      this.tempProduct = { ...item }
+      // console.log(this.tempProduct)
+      this.$refs.productModal.updateProduct(item.id)
     }
   },
+  // 刪除
   mounted () {
     this.getProducts()
+    // console.log(this.$refs)
   }
 }
 </script>
