@@ -35,7 +35,7 @@
               id="item.id"
               v-model="item.is_recommend"
               :true-value="1"
-              :false-value="0"
+              :false-value="0" @change="updateProduct(item)"
             />
             <label
               class="form-check-label"
@@ -144,6 +144,11 @@ export default {
         // 編輯 - 拷貝點選的產品
         this.tempProduct = { ...item }
 
+        // 先判斷是否有 imagesUrl 陣列，沒有得先加上
+        if (this.tempProduct.imagesUrl === undefined) {
+          this.tempProduct.imagesUrl = []
+        }
+
         // 點擊編輯 btn 就把改成 false
         this.isNew = false
 
@@ -167,7 +172,6 @@ export default {
     updateProduct (item) {
       this.isNew = false
       this.tempProduct = { ...item }
-      // console.log(this.tempProduct)
       this.$refs.productModal.updateProduct(item.id)
     }
   },

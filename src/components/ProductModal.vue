@@ -25,16 +25,22 @@
               <div class="mb-2">
                 <div class="mb-3">
                   <label for="imageUrl" class="form-label">輸入圖片網址</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="請輸入圖片連結"
-                    v-model="tempProduct.imageUrl"
-                  />
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="tempProduct.imageUrl"/>
+                    <button type="button" class="btn btn-outline-secondary">上傳圖片</button>
+                  </div>
                 </div>
                 <img class="img-fluid" :src="tempProduct.imageUrl" alt="" />
               </div>
-              <div>
+              <div class="mb-3" >
+                <label for="imageUrl" class="form-label">上傳檔案</label>
+                <div class="input-group">
+                  <input class="form-control" type="file" id="fileInput" ref="fileInput"/>
+                  <button type="button" class="btn btn-outline-secondary" @click="imageUpload">上傳圖片</button>
+                </div>
+                <img class="img-fluid" v-for="image in tempProduct.imagesUrl" :key="image" :src="image" alt="" />
+              </div>
+              <!-- <div>
                 <button class="btn btn-outline-primary btn-sm d-block w-100">
                   新增圖片
                 </button>
@@ -43,7 +49,7 @@
                 <button class="btn btn-outline-danger btn-sm d-block w-100">
                   刪除圖片
                 </button>
-              </div>
+              </div> -->
             </div>
             <div class="col-sm-8">
               <div class="mb-3">
@@ -177,34 +183,67 @@ export default {
   props: ['temp-product', 'is-new'],
   data () {
     return {
-      productModal: ''
+      productModal: '',
+      fileInput: ''
     }
   },
   methods: {
     // 新增產品/更新編輯產品
     updateProduct (productId) {
-      let url = ''
-      let httpMethod = ''
+      // Vue 在更新 DOM 的時候是非同步的，導致 ProductModal 拿到的 props 資料與父元件不一致
+      // 所以使用 nextTick() 當 DOM 更新後才執行
+      this.$nextTick(() => {
+        let url = ''
+        let httpMethod = ''
 
-      if (this.isNew) {
-        url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/product`
-        httpMethod = 'post'
-      } else {
-        url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/product/${productId}`
-        httpMethod = 'put'
-      }
-      console.log(this.tempProduct)
+        if (this.isNew) {
+          url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/product`
+          httpMethod = 'post'
+        } else {
+          url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/product/${productId}`
+          httpMethod = 'put'
+        }
+        this.$http[httpMethod](url, { data: this.tempProduct })
+          .then((res) => {
+            // 關閉 Modal
+            this.closeProductModal()
 
-      this.$http[httpMethod](url, { data: this.tempProduct })
+            // 執行 取得產品列表
+            this.$emit('get-products') // 此方法在外層所以要用 emit
+          })
+          .catch((err) => {
+            console.dir(err.response)
+          })
+      })
+    },
+    // 圖片上傳
+    imageUpload (item) {
+      // if (item === 'needArray') {
+      //   this.tempProduct.imagesUrl = []
+      //   console.log(2)
+      //   return
+      // }
+      console.log(1)
+      // console.dir(e.target.files)
+      console.dir(this.fileInput.files)
+      const file = this.fileInput.files[0]
+      // console.dir(file)
+      // 取得 input file 內的資料
+      // const file = e.target.files[0]
+
+      // 將格式傳換成 formData
+      const formData = new FormData()
+      formData.append('file-to-upload', file)
+      console.log(formData)
+      const url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/upload`
+      this.$http.post(url, formData)
         .then((res) => {
-          // 關閉 Modal
-          this.closeProductModal()
-
-          // 執行 取得產品列表
-          this.$emit('get-products') // 此方法在外層所以要用 emit
+          this.tempProduct.imagesUrl.push(res.data.imageUrl)
+          // 清空 input 欄位
+          this.fileInput.value = ''
         })
         .catch((err) => {
-          console.dir(err.response)
+          console.log(err.response)
         })
     },
     // 開啟 modal
@@ -218,6 +257,7 @@ export default {
   },
   mounted () {
     this.productModal = new Modal(this.$refs.productModal, { keyboard: false })
+    this.fileInput = this.$refs.fileInput
   }
 }
 </script>
