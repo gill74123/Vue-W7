@@ -1,10 +1,13 @@
 import { createApp } from 'vue'
-// Bootstrap
-import 'bootstrap'
-
 // axios / VueAxios
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+
+// material-icons
+import 'material-icons/iconfont/material-icons.css'
+
+// Bootstrap
+import 'bootstrap'
 
 import App from './App.vue'
 import router from './router'

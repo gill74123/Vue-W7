@@ -26,30 +26,51 @@
                 <div class="mb-3">
                   <label for="imageUrl" class="form-label">輸入圖片網址</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="請輸入圖片連結" v-model="tempProduct.imageUrl"/>
-                    <button type="button" class="btn btn-outline-secondary">上傳圖片</button>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="請輸入圖片連結"
+                      ref="imageUrl"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      @click="imageUpload('imageUrl')"
+                    >
+                      上傳圖片
+                    </button>
                   </div>
                 </div>
                 <img class="img-fluid" :src="tempProduct.imageUrl" alt="" />
               </div>
-              <div class="mb-3" >
+              <div class="mb-3">
                 <label for="imageUrl" class="form-label">上傳檔案</label>
                 <div class="input-group">
-                  <input class="form-control" type="file" id="fileInput" ref="fileInput"/>
-                  <button type="button" class="btn btn-outline-secondary" @click="imageUpload">上傳圖片</button>
+                  <input
+                    class="form-control"
+                    type="file"
+                    id="fileInput"
+                    ref="fileInput"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    @click="imageUpload"
+                  >
+                    上傳圖片
+                  </button>
                 </div>
-                <img class="img-fluid" v-for="image in tempProduct.imagesUrl" :key="image" :src="image" alt="" />
+                <template
+                  v-for="(image, index) in tempProduct.imagesUrl"
+                  :key="image">
+                  <div class="position-relative">
+                    <a href="#" @click.prevent="imageDelete(index)">
+                      <span class="material-icons-outlined position-absolute top-0 start-100 translate-middle removeCircle">remove_circle_outline</span>
+                    </a>
+                    <img class="img-fluid mb-2" :src="image" alt="" />
+                  </div>
+                </template>
               </div>
-              <!-- <div>
-                <button class="btn btn-outline-primary btn-sm d-block w-100">
-                  新增圖片
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-outline-danger btn-sm d-block w-100">
-                  刪除圖片
-                </button>
-              </div> -->
             </div>
             <div class="col-sm-8">
               <div class="mb-3">
@@ -165,11 +186,20 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button"
+          <button
+            type="button"
             class="btn btn-outline-secondary"
-            data-bs-dismiss="modal">取消
+            data-bs-dismiss="modal"
+          >
+            取消
           </button>
-          <button type="button" class="btn btn-primary" @click="updateProduct(tempProduct.id)">確認</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="updateProduct(tempProduct.id)"
+          >
+            確認
+          </button>
         </div>
       </div>
     </div>
@@ -184,7 +214,8 @@ export default {
   data () {
     return {
       productModal: '',
-      fileInput: ''
+      fileInput: '',
+      imageUrl: ''
     }
   },
   methods: {
@@ -217,24 +248,20 @@ export default {
       })
     },
     // 圖片上傳
-    imageUpload (item) {
-      // if (item === 'needArray') {
-      //   this.tempProduct.imagesUrl = []
-      //   console.log(2)
-      //   return
-      // }
-      console.log(1)
-      // console.dir(e.target.files)
-      console.dir(this.fileInput.files)
-      const file = this.fileInput.files[0]
-      // console.dir(file)
-      // 取得 input file 內的資料
-      // const file = e.target.files[0]
+    imageUpload (imageUrl) {
+      // 用網址新增圖片
+      if (imageUrl === 'imageUrl') {
+        this.tempProduct.imageUrl = this.imageUrl.value
+        // 清空 input 欄位
+        this.imageUrl.value = ''
+        return
+      }
 
+      // 用檔案新增圖片
+      const file = this.fileInput.files[0]
       // 將格式傳換成 formData
       const formData = new FormData()
       formData.append('file-to-upload', file)
-      console.log(formData)
       const url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/upload`
       this.$http.post(url, formData)
         .then((res) => {
@@ -245,6 +272,10 @@ export default {
         .catch((err) => {
           console.log(err.response)
         })
+    },
+    // 圖片刪除
+    imageDelete (index) {
+      this.tempProduct.imagesUrl.splice(index, 1)
     },
     // 開啟 modal
     openProductModal () {
@@ -258,6 +289,16 @@ export default {
   mounted () {
     this.productModal = new Modal(this.$refs.productModal, { keyboard: false })
     this.fileInput = this.$refs.fileInput
+    this.imageUrl = this.$refs.imageUrl
   }
 }
 </script>
+
+<style lang="scss">
+.removeCircle{
+    color: rgb(212, 212, 212);
+    &:hover{
+        color: red
+    }
+}
+</style>

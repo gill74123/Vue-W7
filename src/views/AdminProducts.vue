@@ -1,5 +1,5 @@
 <template>
-  <h2>後台產品列表</h2>
+  <h2>產品管理</h2>
   <div class="text-end my-4">
     <button class="btn btn-primary me-2" @click="openModal('new')">
       建立新產品
@@ -24,8 +24,6 @@
         <td class="text-start">{{ item.title }}</td>
         <td>{{ item.origin_price }}</td>
         <td>{{ item.price }}</td>
-        <!-- <td>{{ item.starRankData }} {{ item.is_recommend}}星</td>
-         -->
          <td class="text-center">
           <div class="form-check form-switch ps-3">
             <input
@@ -72,7 +70,7 @@
         </td>
         <td>
           <div class="btn-group btn-group-sm">
-            <button type="button" class="btn btn-primary" @click="openModal('edit', item)">編輯</button>
+            <button type="button" class="btn btn-outline-primary" @click="openModal('edit', item)">編輯</button>
             <button type="button" class="btn btn-outline-danger" :disabled="item.is_enabled" @click="openModal('delete', item)">刪除</button>
           </div>
         </td>
