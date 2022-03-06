@@ -18,17 +18,20 @@
             <div class="collapse navbar-collapse d" id="navbarSupportedContent">
               <ul class="navbar-nav flex-column fs-6 mb-2 mb-lg-0 w-100">
                 <li class="nav-item">
-                  <router-link to="/admin/products" class="nav-link py-2 px-3 menuLink">產品管理</router-link>
+                  <router-link to="/admin/products" class="nav-link py-2 px-3">產品管理</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="/admin/orders" class="nav-link py-2 px-3 menuLink">訂單管理</router-link>
+                  <router-link to="/admin/orders" class="nav-link py-2 px-3">訂單管理</router-link>
                 </li>
-                <!-- <li class="nav-item">
-                  <router-link to="" class="nav-link py-2 px-3 menuLink">優惠券管理</router-link>
+                 <li class="nav-item">
+                  <router-link to="/admin/coupons" class="nav-link py-2 px-3 menuLink">優惠券管理</router-link>
                 </li>
-                <li class="nav-item">
+                <!--<li class="nav-item">
                   <router-link to="" class="nav-link py-2 px-3 menuLink">貼文管理</router-link>
                 </li> -->
+                <li class="nav-item">
+                  <a href="#" class="nav-link py-2 px-3" @click.prevent="logout">登出</a>
+                </li>
               </ul>
             </div>
         </nav>
@@ -48,6 +51,7 @@ export default {
     }
   },
   methods: {
+    // 確認管理者
     checkAdmin () {
       const myToken = document.cookie.replace(
         /(?:(?:^|.*;\s*)gillToken\s*=\s*([^;]*).*$)|^.*$/,
@@ -77,6 +81,18 @@ export default {
         // 頁面跳轉
         this.$router.push('/login')
       }
+    },
+    // 登出
+    logout () {
+      const url = `${process.env.VUE_APP_URL}/logout`
+      this.$http.post(url)
+        .then((res) => {
+          // 頁面跳轉
+          this.$router.push('/login')
+        })
+        .catch((err) => {
+          console.log(err.response)
+        })
     }
   },
   mounted () {

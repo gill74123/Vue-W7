@@ -4,7 +4,6 @@
     <button class="btn btn-primary me-2" @click="openModal('new')">
       建立新產品
     </button>
-    <button class="btn btn-secondary" @click="openModal('logout')">登出</button>
   </div>
   <table class="table">
     <thead>
@@ -71,7 +70,7 @@
         <td>
           <div class="btn-group btn-group-sm">
             <button type="button" class="btn btn-outline-primary" @click="openModal('edit', item)">編輯</button>
-            <button type="button" class="btn btn-outline-danger" :disabled="item.is_enabled" @click="openModal('delete', item)">刪除</button>
+            <button type="button" class="btn btn-outline-danger" :disabled="item.is_enabled" @click="openModal('productDelete', item)">刪除</button>
           </div>
         </td>
       </tr>
@@ -81,7 +80,7 @@
   <!-- ProductModal  -->
   <ProductModal ref="productModal" :temp-product="tempProduct" :is-new="isNew" @get-products="getProducts"></ProductModal>
   <!-- Pagination -->
-  <Pagination :pages="pagination" @get-products="getProducts"></Pagination>
+  <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
   <!-- AlertModal - 刪除&登出 -->
   <AlertModal ref="alertModal" :temp-product="tempProduct" :alert-modal-status="alertModalStatus"
             @get-products="getProducts"></AlertModal>
@@ -152,7 +151,7 @@ export default {
 
         // 開啟 modal (呼叫 ProductModal 的方法)
         this.$refs.productModal.openProductModal()
-      } else if (modalStatus === 'delete') {
+      } else if (modalStatus === 'productDelete') {
         // 刪除 - 拷貝點選的產品
         this.tempProduct = { ...item }
 
@@ -173,7 +172,6 @@ export default {
       this.$refs.productModal.updateProduct(item.id)
     }
   },
-  // 刪除
   mounted () {
     this.getProducts()
     // console.log(this.$refs)
