@@ -20,7 +20,7 @@
     <tbody>
       <tr v-for="item in orders" :key="item.id">
         <th scope="row">{{ item.create_at }}</th>
-        <td class="text-start">{{ item.create_at }}</td>
+        <td class="text-start">{{ item.id }}</td>
         <td>{{ item.user.email }}</td>
         <td >
           <div v-for="(product) in item.products" :key="product.id">{{ product.product.title }}</div>
@@ -91,7 +91,8 @@ export default {
       orders: [],
       pagination: {},
       tempOrder: {},
-      alertModalStatus: ''
+      alertModalStatus: '',
+      createTime: ''
     }
   },
   components: {
@@ -137,6 +138,14 @@ export default {
         this.$refs.delAlertModal.openDelAlertModal()
         this.alertModalStatus = modalStatus
       }
+    }
+  },
+  watch: {
+    orders () {
+      this.orders.forEach(item => {
+        // 將時間格式改為 YYYY-MM-DD
+        item.create_at = new Date(item.create_at * 1000).toISOString().split('T')[0]
+      })
     }
   },
   mounted () {
