@@ -109,7 +109,7 @@ a{
   color: rgb(163, 163, 163);
   &.active{
     color: white;
-  background-color: gray;
+    background-color: gray;
   }
 }
 </style>

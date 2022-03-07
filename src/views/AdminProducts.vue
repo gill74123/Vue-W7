@@ -81,15 +81,15 @@
   <ProductModal ref="productModal" :temp-product="tempProduct" :is-new="isNew" @get-products="getProducts"></ProductModal>
   <!-- Pagination -->
   <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
-  <!-- AlertModal - 刪除&登出 -->
-  <AlertModal ref="alertModal" :temp-product="tempProduct" :alert-modal-status="alertModalStatus"
-            @get-products="getProducts"></AlertModal>
+  <!-- DelAlertModal -->
+  <DelAlertModal ref="delAlertModal" :temp-product="tempProduct" :alert-modal-status="alertModalStatus"
+            @get-products="getProducts"></DelAlertModal>
 </template>
 
 <script>
 import ProductModal from '@/components/ProductModal.vue'
 import Pagination from '@/components/Pagination.vue'
-import AlertModal from '@/components/AlertModal.vue'
+import DelAlertModal from '@/components/DelAlertModal.vue'
 
 export default {
   data () {
@@ -107,7 +107,7 @@ export default {
   components: {
     ProductModal,
     Pagination,
-    AlertModal
+    DelAlertModal
   },
   methods: {
     // 取得產品列表
@@ -158,12 +158,12 @@ export default {
         this.alertModalStatus = modalStatus
 
         // 開啟 modal
-        this.$refs.alertModal.openAlertModal()
+        this.$refs.delAlertModal.openDelAlertModal()
       } else if (modalStatus === 'logout') {
         this.alertModalStatus = modalStatus
 
         // 開啟 modal
-        this.$refs.alertModal.openAlertModal()
+        this.$refs.delAlertModal.openDelAlertModal()
       }
     },
     updateProduct (item) {

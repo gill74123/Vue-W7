@@ -75,15 +75,15 @@
   <OrderModal ref="orderModal" :temp-order="tempOrder"></OrderModal>
   <!-- Pagination -->
   <Pagination :pages="pagination" @emit-pages="getOrders"></Pagination>
-  <!-- AlertModal -->
-  <AlertModal ref="alertModal" :temp-order="tempOrder" :alert-modal-status="alertModalStatus"
-  @get-orders="getOrders"></AlertModal>
+  <!-- DelAlertModal -->
+  <DelAlertModal ref="delAlertModal" :temp-order="tempOrder" :alert-modal-status="alertModalStatus"
+  @get-orders="getOrders"></DelAlertModal>
 </template>
 
 <script>
 import OrderModal from '@/components/OrderModal.vue'
 import Pagination from '@/components/Pagination.vue'
-import AlertModal from '@/components/AlertModal.vue'
+import DelAlertModal from '@/components/DelAlertModal.vue'
 
 export default {
   data () {
@@ -97,7 +97,7 @@ export default {
   components: {
     OrderModal,
     Pagination,
-    AlertModal
+    DelAlertModal
   },
   methods: {
     // 取得訂單列表
@@ -134,7 +134,7 @@ export default {
         this.$refs.orderModal.openOrderModal()
       } else if (modalStatus === 'orderDelete' || modalStatus === 'orderAllDelete') { // AlertModal
         this.tempOrder = { ...item }
-        this.$refs.alertModal.openAlertModal()
+        this.$refs.delAlertModal.openDelAlertModal()
         this.alertModalStatus = modalStatus
       }
     }
