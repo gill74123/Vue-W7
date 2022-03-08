@@ -69,9 +69,9 @@
              <li class="nav-item">
               <router-link to="/admin/coupons" class="menuLink">優惠券管理</router-link>
             </li>
-            <!-- <li class="nav-item">
-              <router-link to="" class="menuLink">貼文管理</router-link>
-            </li> -->
+            <li class="nav-item">
+              <router-link to="/admin/articles" class="menuLink">貼文管理</router-link>
+            </li>
             <li class="nav-item">
               <a href="#" class="menuLink" @click.prevent="logout">登出</a>
             </li>

@@ -9,7 +9,7 @@
     <thead>
       <tr class="table-light">
         <th scope="col">名稱</th>
-        <th scope="col" class="text-start">優惠碼</th>
+        <th scope="col">優惠碼</th>
         <th scope="col">折扣</th>
         <th scope="col" width="150">截止日</th>
         <th scope="col" width="150">啟用狀態</th>

@@ -22,7 +22,11 @@ const routes = [
       },
       {
         path: 'coupons',
-        component: () => import('../views/AdminCoupon.vue')
+        component: () => import('../views/AdminCoupons.vue')
+      },
+      {
+        path: 'articles',
+        component: () => import('../views/AdminArticles.vue')
       }
     ]
   },
