@@ -24,13 +24,13 @@
               <div class="col-12">
                 <label for="title" class="form-label">貼文標題</label>
                 <input id="title" type="text" class="form-control" placeholder="輸入標題"
-                v-model="tempArticle.title"
+                v-model="itemArticle.title"
                 />
               </div>
               <div class="col-12">
                 <label for="subtitle" class="form-label">副標題</label>
                 <input id="subtitle" type="text" class="form-control" placeholder="輸入副標題"
-                v-model="tempArticle.description"
+                v-model="itemArticle.description"
                 />
               </div>
           </div>
@@ -70,7 +70,7 @@
                 </div>
               </div>
               <div class="border rounded-2" style="height: 150px; background-size: cover; background-position: center center;"
-              :style="{backgroundImage: `url(${tempArticle.image})`}">
+              :style="{backgroundImage: `url(${itemArticle.image})`}">
               </div>
             </div>
             <div class="col-6 d-flex flex-column justify-content-between">
@@ -82,7 +82,7 @@
               </div>
                 <div class="d-flex">
                   <button class="d-flex align-items-center btn btn-secondary btn-sm rounded-3 me-1"
-                  v-for="(tag, index) in tempArticle.tag" :key="tag" @click="removeTag(index)">
+                  v-for="(tag, index) in itemArticle.tag" :key="tag" @click="removeTag(index)">
                     <span>{{ tag }}</span>
                     <i class="material-icons-round fs-5 ms-1">clear</i>
                   </button>
@@ -90,7 +90,7 @@
               <div class="mb-2">
                 <label for="author" class="form-label">發佈者</label>
                 <input id="author" type="text" class="form-control" placeholder="輸入發佈者"
-                v-model="tempArticle.author"
+                v-model="itemArticle.author"
                 />
               </div>
               <div>
@@ -102,14 +102,14 @@
           </div>
           <hr>
           <div class="mb-2">
-            <ckeditor :editor="editor" :config="editorConfig" v-model="tempArticle.content"></ckeditor>
+            <ckeditor :editor="editor" :config="editorConfig" v-model="itemArticle.content"></ckeditor>
           </div>
           <div class="form-check me-3">
                   <input
                     id="isPublic"
                     class="form-check-input"
                     type="checkbox"
-                    v-model="tempArticle.isPublic"
+                    v-model="itemArticle.isPublic"
                     :true-value="true"
                     :false-value="false"
                   />
@@ -129,7 +129,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click="updateArticle(tempArticle.id)"
+            @click="updateArticle(itemArticle.id)"
           >
             確認
           </button>
@@ -148,6 +148,9 @@ export default {
   data () {
     return {
       articleModal: '',
+      itemArticle: {
+        tag: []
+      },
       create_at: '',
       fileInput: '',
       imageUrl: '',
@@ -171,12 +174,10 @@ export default {
           url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/article`
           httpMethod = 'post'
         }
-        console.log(this.tempArticle.content)
-        this.$http[httpMethod](url, { data: this.tempArticle })
+        this.$http[httpMethod](url, { data: this.itemArticle })
           .then((res) => {
             // 關閉 Modal
-            console.log(res)
-            this.closeCouponModal()
+            this.closeArticleModal()
 
             // 執行 取得產品列表
             this.$emit('get-articles')// 此方法在外層所以要用 emit
@@ -190,7 +191,7 @@ export default {
     imageUpload (imageUrl) {
       // 用網址新增圖片
       if (imageUrl === 'imageUrl') {
-        this.tempArticle.image = this.imageUrl.value
+        this.itemArticle.image = this.imageUrl.value
         // 清空 input 欄位
         this.imageUrl.value = ''
         return
@@ -204,7 +205,7 @@ export default {
       const url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/upload`
       this.$http.post(url, formData)
         .then((res) => {
-          this.tempArticle.image = res.data.imageUrl
+          this.itemArticle.image = res.data.imageUrl
           // 清空 input 欄位
           this.fileInput.value = ''
         })
@@ -214,14 +215,14 @@ export default {
     },
     // 新增標籤
     addTag (tag) {
-      this.tempArticle.tag.push(tag)
+      this.itemArticle.tag.push(tag)
       this.tag = ''
       // console.log(e.target.value)
     },
     // 移除標籤
     removeTag (index) {
       if (window.event.target.nodeName === 'I') {
-        this.tempArticle.tag.splice(index, 1)
+        this.itemArticle.tag.splice(index, 1)
       }
     },
     // 開啟 modal
@@ -235,7 +236,8 @@ export default {
   },
   watch: {
     tempArticle () {
-      this.create_at = this.tempArticle.create_at
+      this.itemArticle = { ...this.tempArticle }
+      this.create_at = new Date(this.itemArticle.create_at * 1000).toISOString().split('T')[0]
     },
     create_at () {
       // 將時間格式從 YYYY-MM-DD 轉換成 Unix 格式

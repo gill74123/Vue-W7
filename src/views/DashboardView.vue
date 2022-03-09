@@ -43,7 +43,7 @@
   </div> -->
   <div class="container-fluid">
     <div class="row min-vh-100">
-      <div class="col-md-2 border bg-light py-2 ">
+      <div class="col-md-2 border bg-light py-2 sticky-top">
         <div class="d-flex flex-md-column justify-content-between">
           <router-link class="text-dark fs-3" to="/">YumYum</router-link>
           <button

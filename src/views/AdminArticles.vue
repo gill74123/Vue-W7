@@ -71,7 +71,7 @@
     </tbody>
   </table>
   <!-- ArticleModal -->
-  <ArticleModal ref="articleModal" :temp-article="tempArticle" :is-new="isNew" @get-article="getArticles"></ArticleModal>
+  <ArticleModal ref="articleModal" :temp-article="tempArticle" :is-new="isNew" @get-articles="getArticles"></ArticleModal>
   <!-- Pagination -->
   <Pagination :pages="pagination" @emit-pages="getArticles"></Pagination>
   <!-- DelAlertModal -->
@@ -116,19 +116,32 @@ export default {
           console.log(err.response)
         })
     },
+    // 取得單一文章(這個才會有 content 資料)
+    getItemArticle (articleId) {
+      const url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/article/${articleId}`
+      this.$http.get(url)
+        .then((res) => {
+          this.tempArticle = res.data.article
+        })
+        .catch((err) => {
+          console.log(err.response)
+        })
+    },
     // 開啟 modal
     openModal (modalStatus, item) {
       if (modalStatus === 'new') {
         // 新增 - 清空選取產品內資料
         this.tempArticle = {
+          create_at: new Date().getTime() / 1000,
           isPublic: true,
           tag: []
         }
         this.isNew = true
         this.$refs.articleModal.openArticleModal()
       } else if (modalStatus === 'edit') {
+        this.getItemArticle(item.id)
         // 編輯 - 拷貝點選的優惠券
-        this.tempArticle = { ...item }
+        // this.tempArticle = { ...item }
         this.isNew = false
         this.$refs.articleModal.openArticleModal()
       } else if (modalStatus === 'articleDelete') {
