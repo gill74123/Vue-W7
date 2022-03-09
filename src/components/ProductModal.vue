@@ -44,7 +44,7 @@
                 <img class="img-fluid" :src="tempProduct.imageUrl" alt="" />
               </div>
               <div class="mb-3">
-                <label for="imageUrl" class="form-label">上傳檔案</label>
+                <label for="fileInput" class="form-label">上傳檔案</label>
                 <div class="input-group">
                   <input
                     class="form-control"

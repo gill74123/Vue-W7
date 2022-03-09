@@ -54,8 +54,8 @@
             <button
               type="button"
               class="btn btn-outline-primary"
+              @click="openModal('edit', article)"
             >
-            <!-- @click="openModal('edit', coupon)" -->
               編輯
             </button>
             <button
@@ -71,7 +71,7 @@
     </tbody>
   </table>
   <!-- ArticleModal -->
-  <ArticleModal ref="articleModal" :temp-article="tempArticle"></ArticleModal>
+  <ArticleModal ref="articleModal" :temp-article="tempArticle" :is-new="isNew" @get-article="getArticles"></ArticleModal>
   <!-- Pagination -->
   <Pagination :pages="pagination" @emit-pages="getArticles"></Pagination>
   <!-- DelAlertModal -->
@@ -88,7 +88,9 @@ export default {
   data () {
     return {
       articles: {},
-      tempArticle: {},
+      tempArticle: {
+        isPublic: true
+      },
       pagination: {},
       isNew: true,
       alertModalStatus: ''
@@ -117,7 +119,9 @@ export default {
     openModal (modalStatus, item) {
       if (modalStatus === 'new') {
         // 新增 - 清空選取產品內資料
-        this.tempArticle = {}
+        this.tempArticle = {
+          isPublic: true
+        }
         this.isNew = true
         this.$refs.articleModal.openArticleModal()
       } else if (modalStatus === 'edit') {
@@ -131,6 +135,14 @@ export default {
         this.alertModalStatus = modalStatus
         this.$refs.delAlertModal.openDelAlertModal()
       }
+    }
+  },
+  watch: {
+    articles () {
+      this.articles.forEach(item => {
+        // 將時間格式改為 YYYY-MM-DD
+        item.create_at = new Date(item.create_at * 1000).toISOString().split('T')[0]
+      })
     }
   },
   mounted () {
