@@ -76,10 +76,17 @@
             <div class="col-6 d-flex flex-column justify-content-between">
               <div class="mb-2">
                 <label for="tag" class="form-label">標籤</label>
-                <input id="tag" type="text" class="form-control" placeholder="輸入標籤"
-                v-model="tempArticle.tag"
+                <input id="tag" type="text" class="form-control" placeholder="輸入標籤，用 [ ENTER ] 新增"
+                 v-model="tag" @keyup.enter="addTag(tag)"
                 />
               </div>
+                <div class="d-flex">
+                  <button class="d-flex align-items-center btn btn-secondary btn-sm rounded-3 me-1"
+                  v-for="(tag, index) in tempArticle.tag" :key="tag" @click="removeTag(index)">
+                    <span>{{ tag }}</span>
+                    <i class="material-icons-round fs-5 ms-1">clear</i>
+                  </button>
+                </div>
               <div class="mb-2">
                 <label for="author" class="form-label">發佈者</label>
                 <input id="author" type="text" class="form-control" placeholder="輸入發佈者"
@@ -144,6 +151,7 @@ export default {
       create_at: '',
       fileInput: '',
       imageUrl: '',
+      tag: '',
       editor: ClassicEditor,
       editorConfig: {
         toolbar: ['heading', 'bold', 'italic', 'blockquote', 'link', '|', 'undo', 'redo', '|', 'numberedList', 'bulletedList']
@@ -203,6 +211,18 @@ export default {
         .catch((err) => {
           console.log(err.response)
         })
+    },
+    // 新增標籤
+    addTag (tag) {
+      this.tempArticle.tag.push(tag)
+      this.tag = ''
+      // console.log(e.target.value)
+    },
+    // 移除標籤
+    removeTag (index) {
+      if (window.event.target.nodeName === 'I') {
+        this.tempArticle.tag.splice(index, 1)
+      }
     },
     // 開啟 modal
     openArticleModal () {

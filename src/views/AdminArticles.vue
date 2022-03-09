@@ -89,7 +89,8 @@ export default {
     return {
       articles: {},
       tempArticle: {
-        isPublic: true
+        isPublic: true,
+        tag: []
       },
       pagination: {},
       isNew: true,
@@ -120,7 +121,8 @@ export default {
       if (modalStatus === 'new') {
         // 新增 - 清空選取產品內資料
         this.tempArticle = {
-          isPublic: true
+          isPublic: true,
+          tag: []
         }
         this.isNew = true
         this.$refs.articleModal.openArticleModal()
