@@ -56,7 +56,7 @@
               class="btn btn-outline-primary"
               @click="openModal('orderModal', item)"
             >
-              訂單詳情
+              詳情
             </button>
             <button
               type="button"
@@ -118,6 +118,10 @@ export default {
     // 修改訂單
     updateOrder (item) {
       this.tempOrder = { ...item }
+      // 將時間格式從 YYYY-MM-DD 轉換成 Unix 格式
+      // Math.floor() 取小於數值的最大整數
+      this.tempOrder.create_at = Math.floor(new Date(this.tempOrder.create_at) / 1000)
+
       const url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/order/${item.id}`
       this.$http.put(url, { data: this.tempOrder })
         .then((res) => {

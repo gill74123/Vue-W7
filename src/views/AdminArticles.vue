@@ -35,9 +35,8 @@
               v-model="article.isPublic"
               :true-value="true"
               :false-value="false"
-
+              @change="updateArticle(article, 'editPublic')"
             />
-            <!--               @change="updateCoupon(coupon)" -->
             <label
               class="form-check-label"
               for="article.id"
@@ -61,6 +60,7 @@
             <button
               type="button"
               class="btn btn-outline-danger"
+              :disabled="article.isPublic"
               @click="openModal('articleDelete', article)"
             >
               刪除
@@ -89,7 +89,7 @@ export default {
     return {
       articles: {},
       tempArticle: {
-        isPublic: true,
+        isPublic: 'true',
         tag: []
       },
       pagination: {},
@@ -116,22 +116,34 @@ export default {
           console.log(err.response)
         })
     },
-    // 取得單一文章(這個才會有 content 資料)
-    getItemArticle (articleId) {
+    // 取得單一文章(這個才會有 content 資料)，給編輯相關做使用
+    getItemArticle (articleId, editPublic) {
       const url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/article/${articleId}`
       this.$http.get(url)
         .then((res) => {
           this.tempArticle = res.data.article
+
+          // 設定一個 'editPublic' 字樣，讓它與點編輯按鈕做區分
+          if (editPublic === 'editPublic') {
+            this.$refs.articleModal.updateArticle(articleId)
+          }
         })
         .catch((err) => {
           console.log(err.response)
         })
+    },
+    // 編輯公開狀態
+    updateArticle (item, editPublic) {
+      // 設定一個 'editPublic' 字樣，讓它與點編輯按鈕做區分
+      this.getItemArticle(item.id, editPublic)
+      this.isNew = editPublic
     },
     // 開啟 modal
     openModal (modalStatus, item) {
       if (modalStatus === 'new') {
         // 新增 - 清空選取產品內資料
         this.tempArticle = {
+          // 因 tempArticle 一有變動就會做時間轉換，所以新增時先賦予當下的時間
           create_at: new Date().getTime() / 1000,
           isPublic: true,
           tag: []
@@ -139,9 +151,8 @@ export default {
         this.isNew = true
         this.$refs.articleModal.openArticleModal()
       } else if (modalStatus === 'edit') {
+        // 編輯 - 要打另一個 API
         this.getItemArticle(item.id)
-        // 編輯 - 拷貝點選的優惠券
-        // this.tempArticle = { ...item }
         this.isNew = false
         this.$refs.articleModal.openArticleModal()
       } else if (modalStatus === 'articleDelete') {

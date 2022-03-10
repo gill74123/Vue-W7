@@ -80,8 +80,8 @@
                  v-model="tag" @keyup.enter="addTag(tag)"
                 />
               </div>
-                <div class="d-flex">
-                  <button class="d-flex align-items-center btn btn-secondary btn-sm rounded-3 me-1"
+                <div class="d-flex flex-wrap">
+                  <button class="d-flex align-items-center btn btn-secondary btn-sm rounded-3 me-1 mb-1"
                   v-for="(tag, index) in itemArticle.tag" :key="tag" @click="removeTag(index)">
                     <span>{{ tag }}</span>
                     <i class="material-icons-round fs-5 ms-1">clear</i>
@@ -157,7 +157,7 @@ export default {
       tag: '',
       editor: ClassicEditor,
       editorConfig: {
-        toolbar: ['heading', 'bold', 'italic', 'blockquote', 'link', '|', 'undo', 'redo', '|', 'numberedList', 'bulletedList']
+        toolbar: ['heading', 'bold', 'italic', 'blockquote', 'link', '|', 'numberedList', 'bulletedList', '|', 'undo', 'redo']
       }
     }
   },
@@ -170,7 +170,7 @@ export default {
         let url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/article/${articleId}`
         let httpMethod = 'put'
 
-        if (this.isNew) {
+        if (this.isNew === true) { // 因為多了 'editPublic' 的狀態
           url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/article`
           httpMethod = 'post'
         }
@@ -217,7 +217,6 @@ export default {
     addTag (tag) {
       this.itemArticle.tag.push(tag)
       this.tag = ''
-      // console.log(e.target.value)
     },
     // 移除標籤
     removeTag (index) {
@@ -237,6 +236,11 @@ export default {
   watch: {
     tempArticle () {
       this.itemArticle = { ...this.tempArticle }
+
+      if (this.isNew === 'editPublic') {
+        this.itemArticle.isPublic = !(this.tempArticle.isPublic)
+      }
+      // 將時間格式改為 YYYY-MM-DD
       this.create_at = new Date(this.itemArticle.create_at * 1000).toISOString().split('T')[0]
     },
     create_at () {
@@ -246,7 +250,7 @@ export default {
     }
   },
   mounted () {
-    this.articleModal = new Modal(this.$refs.articleModal, { keyboard: false })
+    this.articleModal = new Modal(this.$refs.articleModal, { keyboard: false, focus: false })
     this.fileInput = this.$refs.fileInput
     this.imageUrl = this.$refs.imageUrl
   }
@@ -256,5 +260,11 @@ export default {
 <style>
 .ck-editor__editable_inline {
   min-height: 300px;
+}
+
+/* 主要是 link 功能與 Modal 的 focus 有衝突 */
+:root {
+    --ck-z-default: 100;
+    --ck-z-modal: calc( var(--ck-z-default) + 999 );
 }
 </style>

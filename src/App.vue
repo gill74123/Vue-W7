@@ -9,10 +9,6 @@
 <style lang="scss">
 @import "bootstrap/scss/bootstrap";
 
-ul, li{
-  list-style: none;
-  padding: 0;
-}
 a{
   text-decoration: none;
 }

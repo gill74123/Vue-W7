@@ -28,7 +28,7 @@
                 <li>信箱：{{ tempOrder?.user?.email }}</li>
                 <li>電話：{{ tempOrder?.user?.tel }}</li>
                 <li>地址：{{ tempOrder?.user?.address }}</li>
-                <li>備註：{{ tempOrder?.user?.message }}</li>
+                <li>備註：{{ tempOrder.message }}</li>
               </ul>
               <h3>訂單詳情</h3>
               <ul class="ms-2">
@@ -109,3 +109,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+ul, li{
+  list-style: none;
+  padding: 0;
+}
+</style>
