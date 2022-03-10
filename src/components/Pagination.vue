@@ -6,7 +6,7 @@
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
-      <li class="page-item" v-for="page in pages.total_pages" :key="page + 'page'">
+      <li class="page-item" v-for="page in pages.total_pages" :key="page + 'page'" :class="{active: page === pages.current_page}">
         <a class="page-link" href="#" @click.prevent="updatePage(page)">{{ page }}</a>
       </li>
       <li class="page-item" :class="{disabled: !pages.has_next}">
@@ -28,3 +28,14 @@ export default {
   }
 }
 </script>
+
+// <style lang="scss">
+// .page-link{
+//   &.active{
+//     background-color: red;
+//   }
+// }
+// // .active{
+// //   color: red;
+// // }
+// </style>

@@ -210,7 +210,7 @@
 import Modal from 'bootstrap/js/dist/modal'
 
 export default {
-  props: ['temp-product', 'is-new'],
+  props: ['temp-product', 'is-new', 'pagination'],
   data () {
     return {
       productModal: '',
@@ -226,13 +226,16 @@ export default {
       this.$nextTick(() => {
         let url = ''
         let httpMethod = ''
+        let page = '' // 控制新增/編輯時刷新會到哪一頁
 
         if (this.isNew) {
           url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/product`
           httpMethod = 'post'
+          page = 1
         } else {
           url = `${process.env.VUE_APP_URL}/api/${process.env.VUE_APP_PATH}/admin/product/${productId}`
           httpMethod = 'put'
+          page = this.pagination.current_page
         }
         this.$http[httpMethod](url, { data: this.tempProduct })
           .then((res) => {
@@ -240,7 +243,7 @@ export default {
             this.closeProductModal()
 
             // 執行 取得產品列表
-            this.$emit('get-products') // 此方法在外層所以要用 emit
+            this.$emit('get-products', page) // 此方法在外層所以要用 emit
           })
           .catch((err) => {
             console.dir(err.response)

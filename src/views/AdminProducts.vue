@@ -78,7 +78,8 @@
   </table>
 
   <!-- ProductModal  -->
-  <ProductModal ref="productModal" :temp-product="tempProduct" :is-new="isNew" @get-products="getProducts"></ProductModal>
+  <ProductModal ref="productModal" :temp-product="tempProduct" :is-new="isNew"
+  :pagination="pagination" @get-products="getProducts"></ProductModal>
   <!-- Pagination -->
   <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
   <!-- DelAlertModal -->
